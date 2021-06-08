@@ -10,7 +10,7 @@ import {
 	startSimpleCollator,
 	getParachainIdFromSpec,
 } from "./spawn";
-import { connect, registerParachain, setBalance } from "./rpc";
+import { connect, registerParathread, setBalance } from "./rpc";
 import { checkConfig } from "./check";
 import {
 	clearAuthorities,
@@ -157,10 +157,15 @@ export async function run(config_dir: string, rawConfig: LaunchConfig) {
 			} catch (err) {
 				console.error(err);
 				process.exit(1);
-			}
+            }
+            
+            console.log(`------ Write genesis data of parathread ${id} into file genesis-${id} ------`);
+            fs.writeFileSync(`genesis-${id}`, genesisState);
+            console.log(`------ Write wasm data of parathread ${id} into file wasm-${id}.wasm ------`);
+            fs.writeFileSync(`wasm-${id}.wasm`, genesisWasm);
 
-			console.log(`Registering Parachain ${resolvedId}`);
-			await registerParachain(
+			console.log(`Registering Parathread ${id}`);
+			await registerParathread(
 				relayChainApi,
 				resolvedId,
 				genesisWasm,
